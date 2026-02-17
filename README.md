@@ -1,6 +1,5 @@
 # 🛡️ Cyber Evidence Annotator (MCP Agent)
-
-**School of AI - Session 4 Project**  
+ 
 *Building Autonomous Agents with the Model Context Protocol (MCP)*
 
 ## 📖 Overview
