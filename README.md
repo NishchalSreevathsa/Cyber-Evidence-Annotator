@@ -114,4 +114,4 @@ This project is built on three core pillars:
 This project demonstrates that **Agents are the new Apps**. By standardizing tool interfaces with MCP, we can build modular, secure, and powerful automation systems that bridge the gap between AI reasoning and real-world action.
 
 ---
-*Created by Nishchal for School of AI (Session 4).*
+*Created by Nishchal Sreevathsa*
