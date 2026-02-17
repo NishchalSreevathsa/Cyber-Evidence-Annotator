@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Evidence Annotator (MCP)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #0a0a0a;
+            color: #00ff41;
+        }
+
+        .cyber-border {
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 10px #00ff41;
+        }
+
+        .cyber-button {
+            transition: all 0.3s ease;
+        }
+
+        .cyber-button:hover {
+            background-color: #00ff41;
+            color: #000;
+            box-shadow: 0 0 20px #00ff41;
+        }
+
+        #chat-log {
+            height: 300px;
+            overflow-y: auto;
+            background-color: #000;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+        }
+
+        .log-user {
+            color: #fff;
+        }
+
+        .log-agent {
+            color: #00ff41;
+        }
+
+        .log-system {
+            color: #ff00ff;
+        }
+    </style>
+</head>
+
+<body class="p-8">
+
+    <div class="max-w-4xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="text-center space-y-2">
+            <h1 class="text-4xl font-bold tracking-widest text-shadow">CYBER EVIDENCE ANNOTATOR</h1>
+            <p class="text-sm text-gray-400">SESSION 4: MCP AGENT INTERFACE</p>
+        </div>
+
+        <!-- API Key Input -->
+        <div class="bg-gray-900 p-4 rounded cyber-border">
+            <label class="block text-sm mb-2">GEMINI API KEY (Optional for Simulation)</label>
+            <input type="password" id="api-key" placeholder="Enter valid Gemini API Key..."
+                class="w-full bg-black border border-gray-700 p-2 rounded text-white focus:outline-none focus:border-green-500">
+        </div>
+
+        <!-- Controls -->
+        <div class="grid grid-cols-2 gap-4">
+            <button onclick="sendCommand('Launch the Evidence Locker')"
+                class="cyber-button p-4 rounded border border-green-500 text-center font-bold">
+                [1] LAUNCH EVIDENCE LOCKER
+            </button>
+            <button onclick="sendCommand('Mark evidence as CONFIDENTIAL')"
+                class="cyber-button p-4 rounded border border-green-500 text-center font-bold">
+                [2] STAMP: CONFIDENTIAL
+            </button>
+            <button onclick="sendCommand('Draw a threat border')"
+                class="cyber-button p-4 rounded border border-green-500 text-center font-bold">
+                [3] DRAW THREAT BORDER
+            </button>
+            <button onclick="sendCommand('Close the locker')"
+                class="cyber-button p-4 rounded border border-red-500 text-red-500 hover:text-black hover:bg-red-500 font-bold">
+                [X] CLOSE LOCKER
+            </button>
+        </div>
+
+        <!-- Custom Command -->
+        <div class="flex gap-2">
+            <input type="text" id="custom-command" placeholder="Enter custom agent command..."
+                class="flex-1 bg-black border border-gray-700 p-3 rounded text-white">
+            <button onclick="sendCustomCommand()"
+                class="cyber-button px-6 py-3 rounded border border-green-500 font-bold">EXECUTE</button>
+        </div>
+
+        <!-- Terminal Log -->
+        <div class="cyber-border relative">
+            <div class="absolute top-0 left-0 bg-green-500 text-black px-2 py-0.5 text-xs font-bold">TERMINAL OUTPUT
+            </div>
+            <div id="chat-log" class="mt-4">
+                <div class="log-entry log-system">> System initialized. Waiting for input...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function sendCommand(command) {
+            log(`> User: ${command}`, 'log-user');
+
+            const apiKey = document.getElementById('api-key').value;
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: command, api_key: apiKey })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    // Log the steps the agent took
+                    if (data.steps) {
+                        data.steps.forEach(step => {
+                            log(`> Agent: Calling tool '${step.tool}'...`, 'log-system');
+                            log(`> Result: ${step.result}`, 'log-agent');
+                        });
+                    }
+                    log(`> Agent: ${data.message}`, 'log-agent');
+                } else {
+                    log(`> Error: ${data.detail}`, 'log-system'); // Should be data.detail based on FastAPI error
+                }
+            } catch (e) {
+                log(`> Network Error: ${e}`, 'log-system');
+            }
+        }
+
+        function sendCustomCommand() {
+            const cmd = document.getElementById('custom-command').value;
+            if (cmd) sendCommand(cmd);
+        }
+
+        function log(message, className) {
+            const div = document.createElement('div');
+            div.className = `log-entry ${className}`;
+            div.textContent = message;
+            const logContainer = document.getElementById('chat-log');
+            logContainer.appendChild(div);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>
