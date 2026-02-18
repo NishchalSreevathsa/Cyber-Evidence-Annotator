@@ -50,7 +50,7 @@ This project is built on three core pillars:
     *   **Simulation Mode:** Uses robust keyword matching for instant, offline execution.
     *   **LLM Mode:** Uses **Google Gemini API** to reason and plan complex workflows.
 
-### 3. Key Concepts Applied (Session 4)
+### 3. Key Concepts Applied 
 *   **Asyncio:** Used throughout the server to handle concurrent tool calls without blocking the UI. Like a Chef managing multiple pots on a stove.
 *   **Decorators:** Used to register tools (`@server.call_tool()`), acting like a "VIP List" or Web Application Firewall (WAF) that wraps the function with extra logic.
 *   **Dotenv:** Securely managing configuration and API keys (The "Vault").
